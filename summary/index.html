@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="de">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Über WebRTC</title>
+  <link href="./styles/styles.css" rel="stylesheet" />
+</head>
+<body>
+  <header class="page-header">
+    <div class="content-container">
+      <div class="page-header-text">
+        <h1>WebRTC</h1>
+        <p>Diese Seite gibt einen Überblick über das Thema WebRTC.</p>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section>
+      <div class="content-container">
+        <h2>Ein kleiner Überblick!</h2>
+        
+        <p>
+          WebRTC (Web Real-Time Communication) ist ein offener Standard, welcher es ermöglicht Echtzeit-Kommunikation, wie Audio-, Video- und Datenaustausch,
+          direkt im Webbrowser zu betreiben. 
+        </p>
+
+        <p>
+          WebRTC basiert dabei lediglich auf HTML 5 und Javascript, dadurch ist es in jedem (geläufigen) modernen Browser verwendbar.
+          Um eine Komunikationsverbindung aufzubauen ist dabei üblicherweise ein Backend-Server nötig, welcher Anfragen und Antworten von Clients verarbeitet und weitergibt und 
+          falls nötig, noch Benutzerauthentifizierung durchführt. 
+          Die Browser selbst arbeiten ab der Kommunikationsverhandlung im Peer-to-Peer Modus.
+        </p>
+
+        <h3>Wieso haben wir uns für WebRTC entschieden?</h3>
+        <p>
+          Vor kurzen wurde die beliebte Chatplattform Omegle geschlossen daher wollen wir im Zuge unseres Studiums diese Website zumindest in Teilen nachbauen.
+          Zusätzlich war es interessant mit für uns neuen Technologien in Kontakt treten zu können und unseren technischen Horizont zu erweitern.
+        </p>
+        
+        <h3>Wo haben Sie (unbewusst) WebRTC bereits verwendet?</h3>
+        <p>
+          Vermutlich jeder hat bereits WebRTC verwendet, da z.B. Discord, Google Hangouts + Meet, Zoom und weitere Seiten WebRTC verwenden um Echtzeit-Kommunikation zu ermöglichen 
+          und dabei die Serverlast gering zu halten. 
+        </p>
+
+        <h3>Wichtige Funktionen unseres Projektes:</h3>
+        <ul>
+          <li>Video-Streaming Funktion, welche durch die Browsermedien-Abfrage auf Webcam und Mikrofon zugreift</li>
+          <li>Verbindungsaufbau zu anderen bereitstehenden Clients mittels Backend-Server</li>
+          <li>Chat-Funktion, ebenfalls durch WebRTC implementiert</li>
+          <li>Responsive Layout, für mobile Geräte, Standard Monitore und Ultrawide Desktop Monitore</li>
+          <li>Verschlüsselte Kommunikation zwischen Browser und Frontend</li>
+        </ul>
+      </div>
+    </section>
+
+    <section>
+      <div class="content-container">
+        <h2>Wie erfolgte die Implementierung? Worauf war zu achten!</h2>
+        <p>
+          Wir starteten mit der Aufteilung des Projekts in Backend- und Frontend-Teile, merkten jedoch in der Ausarbeitung, dass die Schnittstelle zwischen beiden komplizierter 
+          als gedacht war und dadurch viel Abstimmungen benötigt wird. Nach mehreren Rewrites zeichneten wir uns das Kommunikationsmodell auf um leichter zu einer 
+          möglichen Implementierung zu kommen.
+        </p>
+        <div>
+          <img src="./assets/How_it_works.png" alt="WebRTC-Kommunikationsmodell" />
+          <p>In der Skizze sieht man den Ablauf des Verbindungsaufbaus und somit das Zusammenspiel zwischen dem Frontend und dem Backend.</p>
+        </div>
+        <hr>
+        <p>
+          Zusätzlich mussten wir uns mit dem Thema der RTC-ICE-Kandidaten auseinandersetzen, welche die eigentliche Kommunikationsinformation für die RTC-Clients enthalten. 
+          Ein wesentliches Problem stellte bei diesen der Trickle-Modus dar, bei dem einzelne ICE-Kandidaten an die Clients gesendet und empfangen werden können.
+        </p>
+        <div>
+          <img src="./assets/stun.jpg" alt="Darstellung der Verbindungsinformationen vom STUN-Server" />
+          <p>STUN-Server ermöglichen es Geräten hinter NAT (Network Address Translation), ihre öffentliche IP-Adresse und den Port zu entdecken, um direkte 
+            Peer-to-Peer-Kommunikation über das Internet zu erleichtern. Sie überwinden die Einschränkungen von NAT, indem sie die notwendigen Informationen für 
+            die Herstellung einer Verbindung zwischen Geräten in verschiedenen lokalen Netzwerken bereitstellen.
+          </p>
+        </div>
+        <hr>
+        <p>Beispiel für SDP-Offer und SDP-Answer:</p>
+        <div>
+          <div>
+              <div id="numAudioTracks">
+                <label for="numAudioTracksInput">Number of audio tracks:</label>
+                <input id="numAudioTracksInput" max="8" min="0" type="range" value="1"/>
+                <span id="numAudioTracksDisplay">1</span>
+              </div>
+              <textarea id="sdp-offer"></textarea>
+              <button class="sdpbuttons" id="createOffer">Create offer</button>
+          </div>
+          <div>
+            <textarea id="sdp-answer"></textarea>
+            <button class="sdpbuttons" id="createAnswer">Create answer</button>
+          </div>
+        </div>
+        <p>
+          Der erste Client, von dem das Offer stammt, muss diese Antwort ebenfalls speichern, damit beide Teilnehmer alle nötigen Informationen besitzen.
+        </p>
+        <hr>
+        <h3>Wie setzten sich die SDP Messages zusammen?</h3>
+        <p>
+          Die wichtigsten Inhalte der Messages sind die Sitzungsbeschreibung (Ersteller, Name der Session, Protokollversion, Session-Informationen)
+          und die Medienbeschreibung (Medientyp, Port und Protokoll für den Medientransport).            
+        </p>
+      </div>
+    </section>
+
+    <section>
+      <div class="content-container">
+        <h2>Lessons Learned</h2>
+        <h3>Planen VOR der Ausarbeitung</h3>
+        <p>
+          Um effizient ein Web-Projekt mit unbekannten Funktionsweisen umzusetzen, sollte man sich mit der Dokumentation auseinandersetzen, bevor man sich direkt ans Coden setzt. 
+        </p>
+        <h3>Trickling-Down</h3>
+        <p>
+          Da ICE-Candidates asynchron geschickt werden können, trat ein Problem beim Signalling auf. 
+          Aufgrund der Problematik wussten die Clients nie, wann sie mit dem Generieren der für den Verbindungsaufbau nötigen Messages (Offer + Answer) beginnen können, ohne 
+          dabei notwendige Information zu verlieren. <br>
+          <b>Work-around:</b> Senden der Information an Backend, welches dann auch durch Client zum Weitersenden aufgefordert werden musste. Dadurch konnte die Message, welche durch die 
+          Trickling-Down Methode generierte ICE-Candidates enthält erst geschickt werden, nachdem diese vollständig war.  
+        </p>
+        <h3>Erfolgserlebnisse</h3>
+        <p>
+          Eines der größten Erfolgserlebnisse war die erste erfolgreiche Peer-to-Peer Verbindung, welche durch den selbst implementierten Signalling-Server zustande kam.
+        </p>
+        <h3>Privacy concerns</h3>
+        <p>
+          2015 wurde durch Software-Entwickler Daniel Roesler eine Schwachstelle in der WebRTC-Implementierung von den Browsern Firefox und Chrome entdeckt, welche verheerende Folgen 
+          für Benutzer haben konnte. Die Browser erlaubten Requests an die benötigten STUN-Server, welche auch die lokale und somit die public IP-Adresse der 
+          jeweiligen Benutzer enthielten. Durch diese Requests konnten nun über Javascript die IP-Adressen asugelesen werden. Dabei war es unwichtig ob der Benutzer einen VPN verwendete,
+          da dieser bei der Verbindung zu den STUN-Servern wurde. Zusätzlich wurden diese Requests so versendet, dass diese nicht in der Entwicklerkonsole aufschienen. <br>
+          Mittlerweile wurde dieser Exploit von den Browserherstellern unterbunden.
+        </p>
+        <h3>Sollte man WebRTC verwenden?</h3>
+        <p>
+          Wie oben bereits erwähnt haben viele von uns bereits indirekt mit WebRTC zu tun gehabt. Die Peer-to-Peer Verbindung ermöglicht es auch große 
+          Nutzerzahlen mit geringer Serverlast zu unterstützen. Gerade dadurch ist es für Anbieter von Kommunikationssoftware eine tolle Alternative zu anderen Technologien, 
+          welche auf servergestütze Übertragung zwischen den Clients basieren. 
+        </p>
+      </div>
+    </section>
+
+    <section>
+      <div class="content-container">
+        <h2>Weiterführende Links & Ressourcen</h2>
+        <ul>
+          <li><a href="https://webrtc.org/">WebRTC.org</a></li>
+          <li><a href="https://github.com/webrtc/samples">Web RTC samples</a></li>
+          <li><a href="https://www.computerweekly.com/de/definition/WebRTC-Web-Real-Time-Communications">Computerweekly - WebRTC</a></li>
+          <li><a href="https://www.youtube.com/watch?v=FExZvpVvYxA">Hussein Nasser: WebRTC Crash Course</a></li>
+          <li><a href="https://www.amazon.com/Real-Time-Communication-WebRTC-Peer-Peer/dp/1449371876">Loreto, Romano, Miniero - Real-Time Communication with WebRTC: Peer-to-Peer in the Browser</a></li>
+          <li><a href="https://ieeexplore.ieee.org/document/7160422">IEEE - WebRTC technology overview and signaling solution design and implementation</a></li>
+          <li><a href="https://www.linkedin.com/pulse/webrtc-vs-websocket-which-one-choose-your-web-mikhail-garber">WebRTC vs WebSocket: Which One to Choose for Your Web Application?</a></li>
+          <li><a href="https://datatracker.ietf.org/doc/html/rfc8825">Overview: Real-Time Protocols for Browser-Based Applications</a></li>
+          <li><a href="https://github.com/diafygi/webrtc-ips">More about the WebRTC IP-Leak</a></li>
+        </ul>
+      </div>
+    </section>
+
+
+    <section>
+      <div class="content-container">
+        <h2>The team</h2>
+
+        <h4>Auer Richard</h4>
+        <div class="author-content">
+          <img src="./assets/richi.jpg" alt="Richard Auer lächelnd, mit einer Flasche Vodka gerade außerhalb des Bildes." />
+          <p>Richard Auer war bereits seit seiner Jugend sehr Technikaffin und möchte daher nach seiner Lehre
+            und dem berufsbegleitendem Abschluss der HTL-Paul Hahn sein Wissen im Zuge des Software-Engineering Studiums vertiefen.
+          </p>
+        </div>
+
+        <h4>Wührer Paul</h4>
+        <div class="author-content">
+          <p>Paul Wührer ist Research Engineer im Bereich Visual Computing und studiert berufsbegleitend Software-Engineering um 
+            seine Programmierkenntnisse zu intensivieren.</p>
+          <img src="./assets/paul.jpg" alt="Paul Wührer nicht lächelnd, betrunken von der vorhin erwähnten Flasche." />
+        </div>
+
+      </div>
+    </section>
+    <button id="scroll_top_btn">Go to top</button> 
+  </main>
+
+  <footer class="page-footer">
+    <div class="content-container">
+      <p>Check out our other work: 
+      <a href="http://uplif3.de">Richard</a> and
+      <a href="https://github.com/PeeVonDerWee">Paul</a>
+      </p>
+    </div>
+  </footer>
+  <script src="./scripts/index.js" type="text/javascript"></script>
+</body>
+
+</html>
